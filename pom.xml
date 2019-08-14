@@ -15,6 +15,7 @@
         <module>realime-canna</module>
         <module>realime-logger</module>
         <module>realime-publisher</module>
+        <module>gmall0311-canal</module>
         <!--<module>realime-logger</module>-->
 
     </modules>

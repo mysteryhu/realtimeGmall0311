@@ -21,7 +21,9 @@ public class PublisherController {
 
     @Autowired
     PublisherService publisherService;
-
+    //数据格式
+    // [{"id":"dau","name":"新增日活","value":1200},
+    // {"id":"new_mid","name":"新增设备","value":233}]
     @GetMapping("realtime-total")
     public String realtimeHourDate(@RequestParam("date") String date){
         //日活总数
@@ -34,32 +36,44 @@ public class PublisherController {
         dauMap.put("name","新增设备");
         dauMap.put("value",dauTotal);
         totalList.add(dauMap);
-
+        //新增设备数
+        HashMap newMidMap = new HashMap<>();
+        newMidMap.put("id","new_mid");
+        newMidMap.put("name","新增设备");
+        newMidMap.put("value",122);
+        totalList.add(newMidMap);
         return JSON.toJSONString(totalList);
     }
 
-    @GetMapping("realtime-hours")
+    //数据格式 : 分时统计
+    //{"yesterday":{"11":383,"12":123,"17":88,"19":200 },
+    //    "today":{"12":38,"13":1233,"17":123,"19":688 }}
+    @GetMapping("realtime-hour")
     public String realtimeHourDate(@RequestParam("id") String id,@RequestParam("date") String date){
-        JSONObject jsonObject = null;
+
         if("dau".equals(id)){
-            Map dauHours = publisherService.getDauHours(date);
-            jsonObject = new JSONObject();
-            jsonObject.put("today",dauHours);
+            //当天的分时统计
+            Map<String,Long> dauHoursToday = publisherService.getDauHours(date);
+            //获取前一天的日期
             String yesterdayString = getYesterdayString(date);
-            Map dauHoursYesterday = publisherService.getDauHours(yesterdayString);
-            jsonObject.put("yesterday",dauHoursYesterday);
+            //前一天的分时统计
+            Map<String,Long> dauHoursYesterday = publisherService.getDauHours(yesterdayString);
+            HashMap dauMap = new HashMap();
+            dauMap.put("today",dauHoursToday);
+            dauMap.put("yesterday",dauHoursYesterday);
+
+            return JSON.toJSONString(dauMap);
+        }else {
+            //其他业务
         }
-        return jsonObject.toJSONString();
+        return null;
     }
-
-
 
 
     //取得指定日期前一天的日期
     private  String getYesterdayString (String todayStr){
 
         SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
-
         Date today = null;
         try {
             today = dateFormat.parse(todayStr);

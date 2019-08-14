@@ -4,9 +4,9 @@ import java.util.Map;
 
 public interface PublisherService {
 
-        public int getDauTotal(String date );
+         Long getDauTotal(String date );
 
-        public Map getDauHours(String date );
+         Map<String,Long> getDauHours(String date );
 
 
 

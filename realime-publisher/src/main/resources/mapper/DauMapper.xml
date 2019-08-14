@@ -1,11 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper SYSTEM "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.atguigu.realimepublisher.mapper.DauMapper">
-    <select id="getDauTotal" resultType="java.lang.Long">
+    <select id="selectDauTotal" resultType="java.lang.Long">
       select count(*) ct from gmall0311_dau where logdate=#{date}
     </select>
 
-    <select id="getDauHourCount" resultMap="hourMap">
+    <select id="selectDauTotalHourMap" resultMap="hourMap">
         select loghour,count(*) ct from gmall0311_dau where logdate=#{date}
         group by loghour
     </select>
@@ -14,4 +14,5 @@
         <!--<result column="LOGHOUR" property="logHour"></result>-->
         <!--<result column="CT" property="ct"></result>-->
     </resultMap>
+
 </mapper>
