@@ -21,7 +21,7 @@ import org.apache.phoenix.spark._
 object DauAPP {
 
   def main(args: Array[String]): Unit = {
-
+    //处理日活
     //TODO 1 创建上下文环境对象 和Streaming
     val conf = new SparkConf().setAppName("Dau_app").setMaster("local[*]")
     val ssc = new StreamingContext(conf,Seconds(5))

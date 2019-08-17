@@ -1,7 +1,7 @@
 package com.atguigu.realimepublisher.controller;
 
+
 import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.JSONObject;
 import com.atguigu.realimepublisher.service.PublisherService;
 import org.apache.commons.lang.time.DateUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,6 +21,7 @@ public class PublisherController {
 
     @Autowired
     PublisherService publisherService;
+
     //数据格式
     // [{"id":"dau","name":"新增日活","value":1200},
     // {"id":"new_mid","name":"新增设备","value":233}]
@@ -28,6 +29,8 @@ public class PublisherController {
     public String realtimeHourDate(@RequestParam("date") String date){
         //日活总数
         long dauTotal = publisherService.getDauTotal(date);
+        //日交易额
+        Double orderAmount = publisherService.getOrderAmount(date);
 
         List<Map> totalList = new ArrayList<>();
         Map dauMap = new HashMap<>();
@@ -42,6 +45,12 @@ public class PublisherController {
         newMidMap.put("name","新增设备");
         newMidMap.put("value",122);
         totalList.add(newMidMap);
+        //订单金额
+        HashMap orderAmountMap = new HashMap<>();
+        orderAmountMap.put("id","order_amount");
+        orderAmountMap.put("name","新增交易额");
+        orderAmountMap.put("value",orderAmount);
+        totalList.add(orderAmountMap);
         return JSON.toJSONString(totalList);
     }
 
@@ -63,8 +72,23 @@ public class PublisherController {
             dauMap.put("yesterday",dauHoursYesterday);
 
             return JSON.toJSONString(dauMap);
-        }else {
-            //其他业务
+        }else if("order_amount".equals(id)) {
+            //订单金额的分时统计
+            Map<String, Double> orderHourAmountMap = publisherService.getOrderHourAmount(date);
+            //获取前一天的日期
+            String yesterdayString = getYesterdayString(date);
+            //System.out.println(yesterdayString);
+            //前一天的分时统计
+            Map<String, Double> yesorderHourAmountMap = publisherService.getOrderHourAmount(yesterdayString);
+            System.out.println(yesorderHourAmountMap);
+            System.out.println(orderHourAmountMap);
+            Map orderMap = new HashMap();
+            orderMap.put("today",orderHourAmountMap);
+            orderMap.put("yesterday",yesorderHourAmountMap);
+
+            return JSON.toJSONString(orderMap);
+        }else{ //其他业务
+
         }
         return null;
     }
