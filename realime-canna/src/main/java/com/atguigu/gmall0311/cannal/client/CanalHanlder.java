@@ -6,6 +6,7 @@ import com.atguigu.gmall0311.cannal.util.MyKafkaSender;
 import com.atguigu.realimeGmall0311.common.constant.GmallConstants;
 
 import java.util.List;
+import java.util.Random;
 
 
 public class CanalHanlder {
@@ -28,6 +29,15 @@ public class CanalHanlder {
             for (CanalEntry.RowData rowData : rowDataList) {
                 sendToKafka(GmallConstants.KAFKA_TOPIC_ORDER,rowData);
             }
+        }else if(tableName.equals("order_detail")&&eventType.equals(CanalEntry.EventType.INSERT)){
+            for (CanalEntry.RowData rowData : rowDataList) {
+                sendToKafka(GmallConstants.KAFKA_TOPIC_ORDER_DETAIL,rowData);
+            }
+        }else if(tableName.equals("user_info")&&eventType.equals(CanalEntry.EventType.INSERT)|| eventType.equals(CanalEntry.EventType.DELETE)){
+            for (CanalEntry.RowData rowData : rowDataList) {
+                sendToKafka(GmallConstants.KAFKA_TOPIC_USER_INFO,rowData);
+            }
+
         }
     }
 
@@ -49,6 +59,11 @@ public class CanalHanlder {
         String rowJson = jsonObject.toJSONString();
         //发送到kafka中
         MyKafkaSender.send(topic,rowJson);
+        try {
+            Thread.sleep(new Random().nextInt(2)*100);
+        }catch (InterruptedException e){
+            e.printStackTrace();
+        }
 
     }
 }
